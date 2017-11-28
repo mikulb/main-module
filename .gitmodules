@@ -1,3 +1,6 @@
 [submodule "sub-module-a"]
 	path = sub-module-a
 	url = git@github.com:mikulb/sub-module-a.git
+[submodule "tk_standard_hr"]
+	path = tk_standard_hr
+	url = git@github.com:toolkt/tk_standard_hr.git
