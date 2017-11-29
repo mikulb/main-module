@@ -7,3 +7,6 @@
 [submodule "tk_standard_hr_contacts"]
 	path = tk_standard_hr_contacts
 	url = git@github.com:toolkt/tk_standard_hr_contacts.git
+[submodule "tk_standard_hr_attendance_and_holidays"]
+	path = tk_standard_hr_attendance_and_holidays
+	url = git@github.com:toolkt/tk_standard_hr_attendance_and_holidays.git

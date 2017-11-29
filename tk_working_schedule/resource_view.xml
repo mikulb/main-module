@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+
+		<record model="ir.ui.view" id="tk_view_resource_calendar_attendance_tree">
+			<field name="name">tk.resource.calendar.attendance.tree</field>
+			<field name="model">resource.calendar.attendance</field>
+			<field name="inherit_id" ref="resource.view_resource_calendar_attendance_tree"/>
+			<field name="arch" type="xml">
+
+				<field name="hour_to" position="after">
+					<field name="month"/>
+				</field>
+
+			</field>
+		</record>
+		<!-- Original Reference
+        <record id="view_resource_calendar_attendance_tree" model="ir.ui.view">
+            <field name="name">resource.calendar.attendance.tree</field>
+            <field name="model">resource.calendar.attendance</field>
+            <field name="arch" type="xml">
+                <tree string="Working Time" editable="top">
+                    <field name="name"/>
+                    <field name="dayofweek"/>
+                    <field name="hour_from" widget="float_time"/>
+                    <field name="hour_to" widget="float_time"/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                </tree>
+            </field>
+        </record>
+    	-->
+
+	</data>
+</openerp>

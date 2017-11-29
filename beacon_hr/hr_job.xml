@@ -1,0 +1,28 @@
+<openerp>
+	<data>
+
+		<record id="hr_job_inherits" model="ir.ui.view">
+			<field name="name">hr_jobs_inherit</field>
+			<field name="model">hr.job</field>
+			<field name="inherit_id" ref="hr.view_hr_job_form"/>
+			<field name="arch" type="xml">
+				<field name="user_id" position="attributes">
+					<attribute name="string">Requistioning Officer</attribute>
+				</field>
+			</field>
+		</record>
+
+		<record id="edit_resource_calendar_attendance_inherit" model="ir.ui.view">
+			<field name="name">edit.resource.calendar.attendance.inherit</field>
+			<field name="model">resource.calendar.attendance</field>
+			<field name="inherit_id" ref="resource.view_resource_calendar_attendance_tree"/>
+			<field name="arch" type="xml">
+				<field name="name" position="before">
+					<field name="day_off" invisible="1"/>
+				</field>
+			</field>
+		</record>
+
+	</data>
+</openerp>
+

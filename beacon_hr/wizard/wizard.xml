@@ -1,0 +1,243 @@
+<openerp>
+	<data>
+		<menuitem name="Report" id="hr_menu_reports_id" parent="user_menu_report_id" sequence="4" groups="base.group_hr_manager"/>
+
+<!-- View Attendance Report -->
+		<record id="attendance_report_wizard" model="ir.ui.view">
+			<field name="name">Attendance Report Wizard</field>
+			<field name="model">attendance.report</field>
+			<field name="arch" type="xml">
+				<form string="Attendance Report">
+					<group>
+						<field name="name" options="{'no_open': True,'no_create': 1, 'no_create_edit': 1}"/>
+						<field name="date_from"/>
+						<field name="date_to"/>
+					</group>
+					<group>
+						<field name="output_type"/> 
+						<button name="print_report" string="_Print Report" type="object" class="oe_highlight" />
+					</group>
+				</form>
+			</field>
+		</record>
+
+		<record id="attendance_report_action" model="ir.actions.act_window">
+			<field name="name">Attendance Report</field>
+			<field name="res_model">attendance.report</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="target">new</field>
+		</record>
+		<!--<menuitem action="attendance_report_action" id="attendance_report_menu" parent="menu_reports_id" name="Attendance Report" sequence="1" groups="base.group_hr_manager"/>-->
+<!-- View Attendance Report End -->
+
+<!-- View Overtime Report -->
+		<record id="all_overtime_wizard" model="ir.ui.view">
+			<field name="name">Overtime Report</field>
+			<field name="model">all.overtime.report</field>
+			<field name="arch" type="xml">
+				<form string="Overtime Report">
+					<group>
+						<field name="date" required="True"/>
+					</group>
+					<group>
+						<field name="output_type"/> 
+						<button name="print_report" string="_Print Report" type="object" class="oe_highlight" />
+					</group>
+				</form>
+			</field>
+		</record>
+
+		<record id="all_overtime_action" model="ir.actions.act_window">
+			<field name="name">Overtime Report</field>
+			<field name="res_model">all.overtime.report</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="target">new</field>
+		</record>
+		<!--<menuitem action="all_overtime_action" id="all_overtime_menu" parent="menu_reports_id" name="Overtime Report" sequence="2" groups="base.group_hr_manager"/>-->
+<!-- View Overtime Report End -->
+
+<!-- Time Sheet Per Employee -->
+		<record id="timesheet_per_employee_warning" model="ir.ui.view">
+			<field name="name">timesheet.per.employee.warning</field>
+			<field name="model">timesheet.per.employee</field>
+			<field name="arch" type="xml">
+				<form string="Warning" version="7.0">
+					<field name="message_text" widget="html" nolabel="1"/>
+					<footer style="text-align:center;">
+						<button style="text-align:center; width:150px;" string="Okay" class="oe_highlight" special="cancel"/>
+						<button style="text-align:center; width:150px;" name="leave_type_report_return" string="Return to Wizard" type="object"/>
+						<br/>
+						<br/>
+						<button style="text-align:denter; width:15opx;" name="download_excel" string="Download Excel" type="object"/>
+					</footer>
+				</form>
+			</field>
+		</record>
+
+		<record id="timesheet_per_employee_form_view" model="ir.ui.view">
+			<field name="name">timesheet.per.employee.form</field>
+			<field name="model">timesheet.per.employee</field>
+			<field name="arch" type="xml">
+				<form>
+					<group>
+						<field name="name" options="{'no_open': True,'no_create': 1, 'no_create_edit': 1}"/>
+						<field name="date_from"/>
+						<field name="date_to"/>
+					</group>
+					<field name="timesheet_line" invisible="1">
+						<tree editable="timesheet_id">
+							<field name="tardy" />
+							<field name="undertime"/>
+							<field name="overtime"/>
+						</tree>
+					</field>
+					<footer>
+						<group>
+							<button name="print_reports" string="_Print Report" type="object" class="oe_highlight" />
+						</group>
+					</footer>
+				</form>
+			</field>
+		</record>
+
+		<record id="timesheet_per_employee_form_action" model="ir.actions.act_window">
+			<field name="name">Timesheet Per Employee</field>
+			<field name="res_model">timesheet.per.employee</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="target">new</field>
+		</record>
+		<menuitem action="timesheet_per_employee_form_action" id="timesheet_per_employee_form_menus" parent="hr_menu_reports_id" name="Timesheet Per Employee" sequence="3" groups="base.group_hr_manager"/>
+<!-- Time Sheet Per Employee End -->
+
+<!-- Payroll Summary Report -->
+		<record id="payroll_summary_wizard_view" model="ir.ui.view">
+			<field name="name">payroll.summary.wizard.report</field>
+			<field name="model">payroll.summary.report</field>
+			<field name="arch" type="xml">
+				<form string="Attendance Report">
+					<group>
+						<field name="date_from" required="1"/>
+						<field name="date_to" required="1"/>
+						<field name="selection"/>
+					</group>
+					<group>
+						<field name="output_type"/> 
+					</group>
+					<footer>
+						<button name="print_report" string="_Print Report" type="object" class="oe_highlight" />
+					</footer>
+				</form>
+			</field>
+		</record>
+
+		<record id="payroll_summary_action" model="ir.actions.act_window">
+			<field name="name">Payroll Summary</field>
+			<field name="res_model">payroll.summary.report</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="target">new</field>
+		</record>
+		<menuitem action="payroll_summary_action" id="payroll_summary_menus" parent="hr_menu_reports_id" name="Payroll Summary" sequence="4" groups="base.group_hr_manager"/>
+
+<!-- Substitution Summary: START -->
+		<record id="ea_substitution_summary_warning" model="ir.ui.view">
+			<field name="name">ea.substitution.summary.warning</field>
+			<field name="model">ea.substitution.report</field>
+			<field name="arch" type="xml">
+				<form string="Warning" version="7.0">
+					<field name="message_text" widget="html" nolabel="1"/>
+					<footer style="text-align:center;">
+						<button style="text-align:center; width:150px;" string="Okay" class="oe_highlight" special="cancel"/>
+						<button style="text-align:center; width:150px;" name="substitution_report_return" string="Return to Wizard" type="object"/>
+						<br/>
+						<br/>
+						<button style="text-align:denter; width:15opx;" name="download_excel" string="Download Excel" type="object"/>
+					</footer>
+				</form>
+			</field>
+		</record>
+
+		<record id="ea_substitution_summary_report" model="ir.ui.view">
+			<field name="name">ea.substitution.summary.report</field>
+			<field name="model">ea.substitution.report</field>
+			<field name="arch" type="xml">
+				<form string="Substitution Report">
+					<group>
+						<field name="date_from" required="1"/>
+						<field name="days" required="1" widget="radio"/>
+					</group>
+					<footer>
+						<group>
+							<button name="print_report" string="Generate Report" type="object" class="oe_highlight" />
+						</group>
+					</footer>
+				</form>
+			</field>
+		</record>
+
+
+		<record id="ea_substitution_summary_action" model="ir.actions.act_window">
+			<field name="name">Substitution Summary</field>
+			<field name="res_model">ea.substitution.report</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="target">new</field>
+		</record>
+		<menuitem action="ea_substitution_summary_action" id="ea_substitution_summary_menu" parent="hr_menu_reports_id" name="Substitution Summary" sequence="4" groups="base.group_hr_manager"/>
+		<!--
+		-->
+
+<!-- Substitution Summary: END -->
+<!--
+		<record id="ea_substitution_summary_warnings" model="ir.ui.view">
+			<field name="name">ea.substitution.summary.warnings</field>
+			<field name="model">ea.substitution.reports</field>
+			<field name="arch" type="xml">
+				<form string="Warning" version="7.0">
+					<field name="message_text" widget="html" nolabel="1"/>
+					<footer style="text-align:center;">
+						<button style="text-align:center; width:150px;" string="Okay" class="oe_highlight" special="cancel"/>
+						<button style="text-align:center; width:150px;" name="substitution_report_return" string="Return to Wizard" type="object"/>
+						<br/>
+						<br/>
+						<button style="text-align:denter; width:15opx;" name="download_excel" string="Download Excel" type="object"/>
+					</footer>
+				</form>
+			</field>
+		</record>
+
+		<record id="ea_substitution_summary_reports" model="ir.ui.view">
+			<field name="name">ea.substitution.summary.report</field>
+			<field name="model">ea.substitution.reports</field>
+			<field name="arch" type="xml">
+				<form string="Substitution Report">
+					<group>
+						<field name="date_from"/>
+						<field name="date_to"/>
+						<field name="days" widget="radio"/>
+						<field name="test"/>
+					</group>
+					<group>
+						<field name="output_type"/> 
+					</group>
+					<footer>
+						<button name="print_report" string="_Print Report" type="object" class="oe_highlight" />
+					</footer>
+				</form>
+			</field>
+		</record>
+
+		<record id="ea_substitution_summary_actions" model="ir.actions.act_window">
+			<field name="name">Substitution Summary</field>
+			<field name="res_model">ea.substitution.reports</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="target">new</field>
+		</record>
+		<menuitem action="ea_substitution_summary_actions" id="ea_substitution_summary_menus" parent="hr_menu_reports_id" name="Substitution Summarys" sequence="4" groups="base.group_hr_manager"/>
+-->
+	</data>
+</openerp>

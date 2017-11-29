@@ -1,0 +1,848 @@
+<openerp>
+	<data>
+	<!-- PARENT MENUITEM == START -->
+		<menuitem id="user_menu_report_id" name="Slip Request" parent="hr_holidays.menu_hr_holidays_root"/>
+		<menuitem id="manager_menu_report_id" name="Slip Request (Manager)" parent="hr_holidays.menu_hr_holidays_root"/>
+		<menuitem id="approved_manager_menu_report_id" name="Slip Request (Approved Only)" parent="hr_holidays.menu_hr_holidays_root"/>
+		<menuitem id="admin_menu_report_id" name="Slip Request (Admin)" parent="hr_holidays.menu_hr_holidays_root"/>
+	<!-- PARENT MENUITEM == END -->
+
+<!-- OVERTIME SLIP VIEW FORMS == START -->
+	<!-- OVERTIME SLIP TREE VIEW FOR USERS == START -->
+		<record id="overtime_tree_view" model="ir.ui.view">
+			<field name="name">Overtime Tree</field>
+			<field name="model">overtime.slip</field>
+			<field name="arch" type="xml">
+				<tree string="Overtime">
+					<field name="name"/>
+					<field name="start_time"/>
+					<field name="duration"/>
+					<field name="scheduled_out_time" string="Scheduled Out"/>
+					<field name="actual_out_time" string="Actual Out"/>
+					<field name="total_overitme"/>
+					<field name="state"/>
+				</tree>
+			</field>
+		</record>
+	<!-- OVERTIME SLIP TREE VIEW FOR USERS == END -->
+
+	<!-- OVERTIME SLIP TREE VIEW FOR MANAGER == START -->
+		<record id="overtime_dh_tree_view" model="ir.ui.view">
+			<field name="name">Overtime Tree</field>
+			<field name="model">overtime.slip</field>
+			<field name="arch" type="xml">
+				<tree string="Overtime Tree" create="false" edit="false">
+					<field name="name"/>
+					<field name="start_time"/>
+					<field name="scheduled_out_time" string="Scheduled Out"/>
+					<field name="actual_out_time" string="Actual Out"/>
+					<field name="total_overitme"/>
+					<field name="state"/>
+				</tree>
+			</field>
+		</record>
+	<!-- OVERTIME SLIP TREE VIEW FOR MANAGER == END -->
+
+	<!-- OVERTIME SLIP FORM VIEW FOR USERS == START -->
+		<record id="overtime_form_view" model="ir.ui.view">
+			<field name="name">Overtime</field>
+			<field name="model">overtime.slip</field>
+			<field name="arch" type="xml">
+				<form string="Overtime Form">
+					<header>
+						<button string="Set to Draft" name="def_draft" type="object" class="oe_highlight" attrs="{'invisible': [('state', 'in', 'c')]}"/>
+						<button name="def_to_approve" string="Submit" type="object" class="oe_highlight" attrs="{'invisible': [('state', 'not in', 'a')]}"/>
+						<button name="def_cancel" string="Disapprove" type="object" class="oe_highlight" attrs="{'invisible': [('state', 'in', 'd')]}"
+							groups="attendance_monitor.group_department_head"/>
+						<field name="state" widget="statusbar"/>
+					</header>
+
+					<sheet>
+						<label for="date_filed"/>
+							<field name="date_filed" readonly="1"/>
+
+						<group>
+							<field name="name" style="width:50%" options="{'no_open': True,'no_create': 1, 'no_create_edit': 1}" attrs="{'readonly': [('state','not in',('a'))]}"/>
+							<field name="res_user" invisible="1"/>
+							<field name="position" style="width:50%" attrs="{'readonly': [('state','not in',('a'))]}"/>
+							<field name="department" style="width:50%" options="{'no_open': True,'no_create': 1, 'no_create_edit': 1}" attrs="{'readonly': [('state','not in',('a'))]}"/>
+						</group>
+
+						<div>
+							<label string="From"/>
+							<field name="start_time" nolabel="1" style="width:20%" attrs="{'readonly': [('state','not in',('a'))]}"/>
+							<label string="To"/>
+							<field name="duration" nolabel="1" style="width:20%" attrs="{'readonly': [('state','not in',('a'))]}"/>
+							<label string="Day"/>
+							<field name="day" nolabel="1" style="width:20%" readonly="1"/>
+						</div>
+						<label for="total_overitme_filed"/>
+						<field name="total_overitme_filed" style="width:30%" readonly="1"/>
+						<div>
+							<label for="holiday_id"/>
+							<field name="holiday_id" style="width:50%" options="{'no_open': True}" readonly="1"/>
+						</div>
+
+						<group col="4">
+							<div>
+								<label for="purpose"/>
+								<field name="purpose" nolabel="1" attrs="{'readonly': [('state','not in',('a'))]}"/>
+							</div>
+							<div>
+								<label for="employee_comment"/>
+								<field name="employee_comment" nolabel="1" placeholder="Ex. Please edit my Scheduled Time In and scheduled Time Out, Manager advised me to report early." attrs="{'readonly': [('state','not in',('a'))]}"/>
+							</div>
+						</group>
+
+						<group>
+							<field name="approver_name" style="width:50%" options="{'no_open': True,'no_create': 1, 'no_create_edit': 1}" readonly="1"/>
+						<field name="department_head_id" style="width:50%" invisible="1"/>
+						</group>
+
+						<group col="4">
+							<field name="scheduled_in_time" readonly="1"/>
+							<field name="actual_in_time" readonly="1"/>
+							<field name="scheduled_out_time" readonly="1"/>
+							<field name="actual_out_time" readonly="1"/>
+						</group>
+						<label for="total_overitme"/>
+						<field name="total_overitme" style="width:30%" readonly="1"/>
+						
+						<br/>
+						<button string="Generate Time" name="get_time_out" type="object" class="oe_highlight"/>
+					</sheet>
+
+					<div class="oe_chatter">
+						<field name="message_follower_ids" widget="mail_followers"/>
+						<field name="message_ids" widget="mail_thread"/>
+					</div>
+
+				</form>
+			</field>
+		</record>
+	<!-- OVERTIME SLIP FORM VIEW FOR USERS == END -->
+
+	<!-- OVERTIME SLIP FORM VIEW FOR DEPARTMENT HEAD == START -->
+		<record id="overtime_dh_form_view" model="ir.ui.view">
+			<field name="name">Overtime</field>
+			<field name="model">overtime.slip</field>
+			<field name="arch" type="xml">
+				<form string="Overtime Form" create="false" edit="false">
+					<header>
+						<button string="Set to Draft" name="def_draft" type="object" class="oe_highlight" attrs="{'invisible': [('state', 'in', 'c')]}"/>
+						<button name="def_approve" string="Approve" type="object" class="oe_highlight" attrs="{'invisible': [('state', 'not in', 'b')]}"
+							groups="attendance_monitor.group_department_head,base.group_hr_manager"/>
+						<button name="def_cancel" string="Disapprove" type="object" class="oe_highlight" attrs="{'invisible': [('state', 'in', 'd')]}"
+							groups="attendance_monitor.group_department_head"/>
+						<field name="state" widget="statusbar"/>
+					</header>
+
+					<sheet>
+						<label for="date_filed"/>
+							<field name="date_filed" readonly="1"/>
+
+						<group>
+							<field name="name" readonly="1" options="{'no_open': True}"/>
+							<field name="res_user" invisible="1"/>
+							<field name="position" style="width:50%" readonly="1"/>
+							<field name="department" readonly="1" options="{'no_open': True}"/>
+						</group>
+
+						<div>
+							<label string="From"/>
+							<field name="start_time" nolabel="1" style="width:20%" readonly="1"/>
+							<label string="To"/>
+							<field name="duration" nolabel="1" style="width:20%" readonly="1"/>
+							<label string="Day"/>
+							<field name="day" nolabel="1" style="width:20%" readonly="1"/>
+						</div>
+
+						<label for="total_overitme_filed"/>
+						<field name="total_overitme_filed" style="width:30%" readonly="1"/>
+
+						<div>
+							<label for="holiday_id"/>
+							<field name="holiday_id" style="width:50%" readonly="1"/>
+						</div>
+
+						<group col="4">
+							<div>
+							<label for="purpose"/>
+							<field name="purpose" nolabel="1" readonly="1"/>
+							</div>
+							<div>
+								<label for="employee_comment"/>
+								<field name="employee_comment" nolabel="1" placeholder="Ex. Please edit my Scheduled Time In and scheduled Time Out, Manager advised me to report early." readonly="1"/>
+							</div>
+						</group>
+
+						<group>
+							<field name="approver_name" style="width:50%" readonly="1"/>
+						<field name="department_head_id" style="width:50%" invisible="1"/>
+						</group>
+
+						<group col="4">
+							<field name="scheduled_in_time" readonly="1"/>
+							<field name="actual_in_time" readonly="1"/>
+							<field name="scheduled_out_time" readonly="1"/>
+							<field name="actual_out_time" readonly="1"/>
+						</group>
+
+						<button string="Generate Time" name="get_time_out" type="object" class="oe_highlight"/>
+						<label for="total_overitme"/>
+						<field name="total_overitme" style="width:50%" readonly="1"/>
+					</sheet>
+
+					<div class="oe_chatter">
+						<field name="message_follower_ids" widget="mail_followers"/>
+						<field name="message_ids" widget="mail_thread"/>
+					</div>
+
+				</form>
+			</field>
+		</record>
+	<!-- OVERTIME SLIP FORM VIEW FOR DEPARTMENT HEAD == END -->
+
+	<!-- OVERTIME SLIP FORM VIEW FOR ADMIN == START -->
+		<record id="overtime_admin_form_view" model="ir.ui.view">
+			<field name="name">Overtime</field>
+			<field name="model">overtime.slip</field>
+			<field name="arch" type="xml">
+				<form string="Overtime Form">
+					<header>
+						<field name="state" widget="statusbar"/>
+					</header>
+
+					<sheet>
+						<label for="date_filed"/>
+							<field name="date_filed" readonly="1"/>
+
+						<group>
+							<field name="name" style="width:50%" readonly="1"/>
+							<field name="res_user" invisible="1"/>
+							<field name="position" style="width:50%" readonly="1"/>
+							<field name="department" style="width:50%" readonly="1" options="{'no_open': True}"/>
+						</group>
+
+						<div>
+							<label string="From"/>
+							<field name="start_time" nolabel="1" style="width:20%" readonly="1"/>
+							<label string="To"/>
+							<field name="duration" nolabel="1" style="width:20%" readonly="1"/>
+							<label string="Day"/>
+							<field name="day" nolabel="1" style="width:20%" groups="base.group_hr_manager" readonly="1" />
+						</div>
+
+						<label for="total_overitme_filed"/>
+						<field name="total_overitme_filed" style="width:30%" readonly="1"/>
+
+						<div>
+							<button string="Update Holiday" name="set_the_holiday" type="object" class="oe_highlight"/>
+							<label for="holiday_id"/>
+							<field name="holiday_id" style="width:50%" readonly="1"/>
+						</div>
+
+						<group col="4">
+							<div>
+								<label for="purpose"/>
+								<field name="purpose" nolabel="1" readonly="1"/>
+							</div>
+							<div>
+								<label for="employee_comment"/>
+								<field name="employee_comment" nolabel="1" placeholder="Ex. Please edit my Scheduled Time In and scheduled Time Out, Manager advised me to report early." readonly="1"/>
+							</div>
+						</group>
+
+						<group>
+							<field name="approver_name" style="width:50%" readonly="1"/>
+						<field name="department_head_id" style="width:50%" invisible="1"/>
+						</group>
+
+						<group col="4">
+							<field name="scheduled_in_time" attrs="{'readonly': [('state','in',('c'))]}"/>
+							<field name="actual_in_time" attrs="{'readonly': [('state','in',('c'))]}"/>
+							<field name="scheduled_out_time" attrs="{'readonly': [('state','in',('c'))]}"/>
+							<field name="actual_out_time" attrs="{'readonly': [('state','in',('c'))]}"/>
+						</group>
+
+						<button string="Generate Time" name="get_time_out" type="object" class="oe_highlight"/>
+						<button string="Update Time" name="update_total_time" type="object" class="oe_highlight" groups="base.group_hr_manager"/>
+						<label for="total_overitme"/>
+						<field name="total_overitme" style="width:50%" readonly="1"/>
+					</sheet>
+
+					<div class="oe_chatter">
+						<field name="message_follower_ids" widget="mail_followers"/>
+						<field name="message_ids" widget="mail_thread"/>
+					</div>
+
+				</form>
+			</field>
+		</record>
+	<!-- OVERTIME SLIP FORM VIEW FOR ADMIN == END -->
+<!-- OVERTIME SLIP VIEW FORMS == END -->
+
+<!-- OVERTIME SLIP VIEW ACTIONS == START -->
+	<!-- USER OVERTIME SLIP VIEW FOR USERS == START -->
+			<record id="overtime_slip_users_actions" model="ir.actions.act_window">
+				<field name="name">Overtime Slip</field>
+				<field name="res_model">overtime.slip</field>
+				<field name="view_type">form</field>
+				<field name="view_mode">tree,form</field>
+				<field name="search_view_id" eval="False"/>
+				<field name="context">{}</field>
+				<field name="help"></field>
+				<field name="domain">[('res_user','=',uid)]</field>
+			</record>
+
+			<record model="ir.actions.act_window.view" id="act_overtime_tree_view">
+				<field eval="1" name="sequence"/>
+				<field name="view_mode">tree</field>
+				<field name="view_id" ref="overtime_tree_view"/>
+				<field name="act_window_id" ref="overtime_slip_users_actions"/>
+			</record>
+
+			<record model="ir.actions.act_window.view" id="act_overtime_form_view">
+				<field eval="2" name="sequence"/>
+				<field name="view_mode">form</field>
+				<field name="view_id" ref="overtime_form_view"/>
+				<field name="act_window_id" ref="overtime_slip_users_actions"/>
+			</record>
+
+			<menuitem action="overtime_slip_users_actions" id="overtime_user_view_menu" parent="user_menu_report_id" name="Overtime Slip" sequence="0" groups="beacon_hr.slip_non_acad_group"/>
+	<!-- USER OVERTIME SLIP VIEW FOR USERS == END -->
+
+	<!-- OVERTIME VIEW FOR DEPARTMENT HEAD == START -->
+		<record id="overtime_slip_manager_actions" model="ir.actions.act_window">
+			<field name="name">Overtime Slip</field>
+			<field name="res_model">overtime.slip</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="search_view_id" eval="False"/>
+			<field name="context">{}</field>
+			<field name="help"></field>
+			<field name="domain">[('department_head_id','=',uid),('state','!=','c'),('state','!=','a')]</field>
+		</record>
+
+		<record model="ir.actions.act_window.view" id="act_overtime_dh_tree_view">
+			<field eval="1" name="sequence"/>
+			<field name="view_mode">tree</field>
+			<field name="view_id" ref="overtime_dh_tree_view"/>
+			<field name="act_window_id" ref="overtime_slip_manager_actions"/>
+		</record>
+
+		<record model="ir.actions.act_window.view" id="act_overtime_dh_form_view">
+			<field eval="2" name="sequence"/>
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="overtime_dh_form_view"/>
+			<field name="act_window_id" ref="overtime_slip_manager_actions"/>
+		</record>
+
+		<menuitem action="overtime_slip_manager_actions" id="overtime_manager_view_menu" parent="manager_menu_report_id" name="Overtime Slip (Manager)" sequence="4"
+			groups="beacon_hr.slip_non_acad_dheads_groups"/>
+	<!-- OVERTIME VIEW FOR DEPARTMENT HEAD == END -->
+
+	<!-- OVERTIME VIEW FOR DEPARTMENT HEAD ( APPROVED ONLY ) == START -->
+		<record id="approved_overtime_slip_manager_actions" model="ir.actions.act_window">
+			<field name="name">Overtime Slip</field>
+			<field name="res_model">overtime.slip</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="search_view_id" eval="False"/>
+			<field name="context">{}</field>
+			<field name="help"></field>
+			<field name="domain">[('department_head_id','=',uid),('state','=','c')]</field>
+		</record>
+
+		<record model="ir.actions.act_window.view" id="approved_act_overtime_dh_tree_view">
+			<field eval="1" name="sequence"/>
+			<field name="view_mode">tree</field>
+			<field name="view_id" ref="overtime_dh_tree_view"/>
+			<field name="act_window_id" ref="approved_overtime_slip_manager_actions"/>
+		</record>
+
+		<record model="ir.actions.act_window.view" id="approved_act_overtime_dh_form_view">
+			<field eval="2" name="sequence"/>
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="overtime_dh_form_view"/>
+			<field name="act_window_id" ref="approved_overtime_slip_manager_actions"/>
+		</record>
+
+		<menuitem action="approved_overtime_slip_manager_actions" id="approved_overtime_manager_view_menu" parent="approved_manager_menu_report_id" name="Overtime Slip (Approved Only)" sequence="4"
+			groups="beacon_hr.slip_non_acad_dheads_groups"/>
+	<!-- OVERTIME VIEW FOR DEPARTMENT HEAD ( APPROVED ONLY ) == END -->
+
+	<!-- OVERTIME SLIP VIEW FOR ADMIN == START -->
+		<record id="overtime_slip_admin_actions" model="ir.actions.act_window">
+			<field name="name">Overtime Slip</field>
+			<field name="res_model">overtime.slip</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="search_view_id" eval="False"/>
+			<field name="context">{}</field>
+			<field name="help"></field>
+			<field name="domain"></field>
+		</record>
+
+		<record model="ir.actions.act_window.view" id="admin_act_overtime_tree_view">
+			<field eval="1" name="sequence"/>
+			<field name="view_mode">tree</field>
+			<field name="view_id" ref="overtime_tree_view"/>
+			<field name="act_window_id" ref="overtime_slip_admin_actions"/>
+		</record>
+
+		<record model="ir.actions.act_window.view" id="admin_act_overtime_form_view">
+			<field eval="2" name="sequence"/>
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="overtime_admin_form_view"/>
+			<field name="act_window_id" ref="overtime_slip_admin_actions"/>
+		</record>
+
+		<menuitem action="overtime_slip_admin_actions" id="overtime_admin_view_menu" parent="admin_menu_report_id" name="Overtime Slip (Admin)" sequence="4" groups="base.group_hr_manager"/>
+	<!-- OVERTIME SLIP VIEW FOR ADMIN == END -->
+<!-- OVERTIME SLIP VIEW ACTIONS == END -->
+
+<!-- EA SUBSTITUTION SLIP VIEW FORMS == START -->
+	<!-- EA SUBSTITUTION TREE VIEW FOR DEPARTMENT HEAD == START -->
+		<record id="noedit_teacher_substitution_slip_tree_view" model="ir.ui.view">
+			<field name="name">teacher.substitution.slip.tree.view</field>
+			<field name="model">teacher.substitution.slip</field>
+			<field name="arch" type="xml">
+				<tree string="EA SUBSTITUION" create="false" edit="false">
+					<field name="name"/>
+					<field name="date"/>
+					<field name="date_to"/>
+					<field name="state"/>
+				</tree>
+			</field>
+		</record>
+	<!-- EA SUBSTITUTION TREE VIEW FOR DEPARTMENT HEAD == END -->
+
+	<!-- EA SUBSTITUION CALENDAR VIEW FOR USER == START -->
+		<record id="teacher_substitution_slip_calendar_view" model="ir.ui.view">
+			<field name="name">teacher.substitution.slip.calendar.view</field>
+			<field name="model">teacher.substitution.slip</field>
+			<field name="arch" type="xml">
+				<calendar string="EA Substitution" color="name" date_start="date" date_stop="date_to" mode="month" quick_add="False" avatar_model="hr.employee">
+					<field name="name"/>
+				</calendar>
+			</field>
+		</record>
+	<!-- EA SUBSTITUION CALENDAR VIEW FOR USER == END -->
+
+	<!-- EA SUBSTITUION TREE VIEW FOR USER == START -->
+		<record id="teacher_substitution_slip_tree_view" model="ir.ui.view">
+			<field name="name">teacher.substitution.slip.tree.view</field>
+			<field name="model">teacher.substitution.slip</field>
+			<field name="arch" type="xml">
+				<tree string="EA SUBSTITUION">
+					<field name="name"/>
+					<field name="date"/>
+					<field name="date_to"/>
+					<field name="state"/>
+				</tree>
+			</field>
+		</record>
+	<!-- EA SUBSTITUION TREE VIEW FOR USER == END -->
+
+	<!-- EA SUBSTITUION FORM VIEW FOR USER == START -->
+		<record id="teacher_substitution_slip_form_view" model="ir.ui.view">
+			<field name="name">teacher.substitution.slip.form.view</field>
+			<field name="model">teacher.substitution.slip</field>
+			<field name="arch" type="xml">
+				<form>
+					<header>
+						<button string="Set to Draft" name="def_draft" type="object" class="oe_highlight" attrs="{'invisible': [('state', 'in', 'c')]}"/>
+						<button name="def_to_approve" string="Submit" type="object" class="oe_highlight" attrs="{'invisible': [('state', 'not in', 'a')]}"/>
+						<button name="def_cancel" string="Disapprove" type="object" class="oe_highlight" attrs="{'invisible': [('state', 'in', 'd')]}" groups="attendance_monitor.group_department_head"/>
+
+						<field name="state" widget="statusbar"/>
+					</header>
+					<sheet>
+						<group>
+							<field name="date_filed" readonly="1"/>
+							<field name="res_user" invisible="1"/>
+							<field name="date" attrs="{'readonly': [('state','not in',('a'))]}" required="True"/>
+							<field name="date_to" attrs="{'readonly': [('state','not in',('a'))]}" required="True"/>
+							<field name="selection" widget="radio" attrs="{'readonly': [('state','not in',('a'))]}"/>
+							<field name="name" required="True" options="{'no_open': True,'no_create': 1, 'no_create_edit': 1}" attrs="{'readonly': [('state','not in',('a'))]}"/>
+							<field name="teacher_name" required="True" options="{'no_open': True,'no_create': 1, 'no_create_edit': 1}" attrs="{'readonly': [('state','not in',('a'))]}"/>
+							<field name="reason" attrs="{'readonly': [('state','not in',('a'))]}"/>
+							<field name="department" options="{'no_open': True,'no_create': 1, 'no_create_edit': 1}" attrs="{'readonly': [('state','not in',('a'))]}"/>
+							<field name="approver_name" style="width:50%" options="{'no_open': True,'no_create': 1, 'no_create_edit': 1}" readonly="1"/>
+						<field name="department_head_id" style="width:50%" invisible="1"/>
+						</group>
+					</sheet>
+					<div class="oe_chatter">
+						<field name="message_follower_ids" widget="mail_followers"/>
+						<field name="message_ids" widget="mail_thread"/>
+					</div>
+				</form>
+			</field>
+		</record>
+	<!-- EA SUBSTITUION FORM VIEW FOR USER == END -->
+
+	<!-- EA SUBSTITUION VIEW FOR DEPARTMENT HEAD == START -->
+		<record id="dh_teacher_substitution_slip_form_view" model="ir.ui.view">
+			<field name="name">teacher.substitution.slip.form.view</field>
+			<field name="model">teacher.substitution.slip</field>
+			<field name="arch" type="xml">
+				<form string="EA Substitution" create="false" edit="false">
+					<header>
+						<button string="Set to Draft" name="def_draft" type="object" class="oe_highlight" attrs="{'invisible': [('state', 'in', 'c')]}"/>
+						<button name="def_approve" string="Approve" type="object" class="oe_highlight" attrs="{'invisible': [('state', 'not in', 'b')]}" groups="attendance_monitor.group_department_head"/>
+						<button name="def_cancel" string="Disapprove" type="object" class="oe_highlight" attrs="{'invisible': [('state', 'in', 'd')]}" groups="attendance_monitor.group_department_head"/>
+
+						<field name="state" widget="statusbar"/>
+					</header>
+					<sheet>
+						<group>
+							<field name="date_filed" readonly="1"/>
+							<field name="res_user" invisible="1"/>
+							<field name="date" readonly="1"/>
+							<field name="date_to" readonly="1"/>
+							<field name="selection" widget="radio" readonly="1"/>
+							<field name="name" readonly="1" options="{'no_open': True}"/>
+							<field name="teacher_name" readonly="1" options="{'no_open': True}"/>
+							<field name="reason" readonly="1"/>
+							<field name="department" readonly="1" options="{'no_open': True}"/>
+							<field name="approver_name" readonly="1"/>
+						<field name="department_head_id" style="width:50%" invisible="1"/>
+						</group>
+					</sheet>
+					<div class="oe_chatter">
+						<field name="message_follower_ids" widget="mail_followers"/>
+						<field name="message_ids" widget="mail_thread"/>
+					</div>
+				</form>
+			</field>
+		</record>
+	<!-- EA SUBSTITUION VIEW FOR DEPARTMENT HEAD == END -->
+
+	<!-- EA SUBSTITUION VIEW FOR DEPARTMENT HEAD ( APPROVED ONLY ) == START -->
+		<record id="dh_teacher_substitution_slip_approved" model="ir.ui.view">
+			<field name="name">teacher.substitution.slip.form.view</field>
+			<field name="model">teacher.substitution.slip</field>
+			<field name="arch" type="xml">
+				<form string="EA Substitution" create="false" edit="false">
+					<header>
+						<button string="Set to Draft" name="def_draft" type="object" class="oe_highlight" attrs="{'invisible': [('state', 'in', 'c')]}"/>
+						<button name="def_cancel" string="Disapprove" type="object" class="oe_highlight" attrs="{'invisible': [('state', 'in', 'd')]}" groups="attendance_monitor.group_department_head"/>
+						<field name="state" widget="statusbar"/>
+					</header>
+					<sheet>
+						<group>
+							<field name="date_filed" readonly="1"/>
+							<field name="res_user" invisible="1"/>
+							<field name="date" readonly="1"/>
+							<field name="date_to" readonly="1"/>
+							<field name="selection" widget="radio" readonly="1"/>
+							<field name="name" readonly="1" options="{'no_open': True}"/>
+							<field name="teacher_name" readonly="1" options="{'no_open': True}"/>
+							<field name="reason" readonly="1"/>
+							<field name="department" readonly="1" options="{'no_open': True}"/>
+							<field name="approver_name" readonly="1"/>
+						<field name="department_head_id" style="width:50%" invisible="1"/>
+						</group>
+					</sheet>
+					<div class="oe_chatter">
+						<field name="message_follower_ids" widget="mail_followers"/>
+						<field name="message_ids" widget="mail_thread"/>
+					</div>
+				</form>
+			</field>
+		</record>
+	<!-- EA SUBSTITUION VIEW FOR DEPARTMENT HEAD ( APPROVED ONLY ) == END -->
+
+	<!-- EA SUBSTITUION VIEW FOR ADMIN == START -->
+		<record id="admin_teacher_substitution_slip_form_view" model="ir.ui.view">
+			<field name="name">teacher.substitution.slip.form.view</field>
+			<field name="model">teacher.substitution.slip</field>
+			<field name="arch" type="xml">
+				<form string="EA Substitution" create="false" edit="false">
+					<header>
+						<button string="Set to Draft" name="def_draft" type="object" class="oe_highlight" attrs="{'invisible': [('state', 'in', 'c')]}"/>
+						<field name="state" widget="statusbar"/>
+					</header>
+					<sheet>
+						<group>
+							<field name="date_filed" readonly="1"/>
+							<field name="res_user" invisible="1"/>
+							<field name="date" readonly="1"/>
+							<field name="date_to" readonly="1"/>
+							<field name="selection" widget="radio" readonly="1"/>
+							<field name="name" readonly="1"/>
+							<field name="teacher_name" readonly="1"/>
+							<field name="reason" readonly="1"/>
+							<field name="department" readonly="1"/>
+							<field name="approver_name" readonly="1"/>
+						<field name="department_head_id" style="width:50%" invisible="1"/>
+						</group>
+					</sheet>
+					<div class="oe_chatter">
+						<field name="message_follower_ids" widget="mail_followers"/>
+						<field name="message_ids" widget="mail_thread"/>
+					</div>
+				</form>
+			</field>
+		</record>
+	<!-- EA SUBSTITUION VIEW FOR ADMIN == END -->
+<!-- EA SUBSTITUTION SLIP VIEW FORMS == END -->
+
+<!-- EA SUBSTITUTION SLIP VIEW ACTION == START -->
+	<!-- EA SUBSTITUTION SLIP VIEW FOR USERS == START -->
+		<record id="teacher_substitution_user_action" model="ir.actions.act_window">
+			<field name="name">EA Substitution Slip</field>
+			<field name="res_model">teacher.substitution.slip</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">calendar,tree,form</field>
+			<field name="search_view_id" eval="False"/>
+			<field name="context">{}</field>
+			<field name="help"></field>
+			<field name="domain">[('res_user','=',uid)]</field>
+		</record>
+
+		<record model="ir.actions.act_window.view" id="act_ea_substitution_calendar_view">
+			<field eval="1" name="sequence"/>
+			<field name="view_mode">calendar</field>
+			<field name="view_id" ref="teacher_substitution_slip_calendar_view"/>
+			<field name="act_window_id" ref="teacher_substitution_user_action"/>
+		</record>
+
+		<record model="ir.actions.act_window.view" id="act_ea_substitution_tree_view">
+			<field eval="2" name="sequence"/>
+			<field name="view_mode">tree</field>
+			<field name="view_id" ref="teacher_substitution_slip_tree_view"/>
+			<field name="act_window_id" ref="teacher_substitution_user_action"/>
+		</record>
+
+		<record model="ir.actions.act_window.view" id="act_ea_substitution_form_view">
+			<field eval="3" name="sequence"/>
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="teacher_substitution_slip_form_view"/>
+			<field name="act_window_id" ref="teacher_substitution_user_action"/>
+		</record>
+
+		<menuitem action="teacher_substitution_user_action" id="teacher_substitution_user_menu" parent="user_menu_report_id" name="EA Substitution Slip" sequence="3" groups="beacon_hr.slip_acad_group"/>
+	<!-- EA SUBSTITUTION SLIP VIEW FOR USERS == START -->
+
+	<!-- EA SUBSTITUTION VIEW FOR DEPARTMENT HEAD == START -->
+		<record id="teacher_substitution_manager_action" model="ir.actions.act_window">
+			<field name="name">EA Substitution Slip</field>
+			<field name="res_model">teacher.substitution.slip</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="search_view_id" eval="False"/>
+			<field name="context">{}</field>
+			<field name="help"></field>
+			<field name="domain">[('department_head_id','=',uid),('state','!=','c'),('state','!=','a')]</field>
+		</record>
+
+		<record model="ir.actions.act_window.view" id="dh_act_ea_substitution_tree_view">
+			<field eval="2" name="sequence"/>
+			<field name="view_mode">tree</field>
+			<field name="view_id" ref="noedit_teacher_substitution_slip_tree_view"/>
+			<field name="act_window_id" ref="teacher_substitution_manager_action"/>
+		</record>
+
+		<record model="ir.actions.act_window.view" id="dh_act_ea_substitution_form_view">
+			<field eval="3" name="sequence"/>
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="dh_teacher_substitution_slip_form_view"/>
+			<field name="act_window_id" ref="teacher_substitution_manager_action"/>
+		</record>
+
+		<menuitem action="teacher_substitution_manager_action" id="teacher_substitution_manager_menu" parent="manager_menu_report_id" name="EA Substitution Slip (Manager)" sequence="6"
+			groups="beacon_hr.slip_acad_dheads_groups"/>
+	<!-- EA SUBSTITUTION VIEW FOR DEPARTMENT HEAD == END -->
+
+	<!-- EA SUBSTITUTION VIEW FOR DEPARTMENT HEAD ( APPROVED ONLY ) == START -->
+		<record id="approved_teacher_substitution_manager_action" model="ir.actions.act_window">
+			<field name="name">EA Substitution Slip</field>
+			<field name="res_model">teacher.substitution.slip</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="search_view_id" eval="False"/>
+			<field name="context">{}</field>
+			<field name="help"></field>
+			<field name="domain">[('department_head_id','=',uid),('state','=','c')]</field>
+		</record>
+
+		<record model="ir.actions.act_window.view" id="approved_act_ea_substitution_tree_view">
+			<field eval="1" name="sequence"/>
+			<field name="view_mode">tree</field>
+			<field name="view_id" ref="noedit_teacher_substitution_slip_tree_view"/>
+			<field name="act_window_id" ref="approved_teacher_substitution_manager_action"/>
+		</record>
+
+		<record model="ir.actions.act_window.view" id="approved_act_ea_substitution_form_view">
+			<field eval="2" name="sequence"/>
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="dh_teacher_substitution_slip_approved"/>
+			<field name="act_window_id" ref="approved_teacher_substitution_manager_action"/>
+		</record>
+
+		<menuitem action="approved_teacher_substitution_manager_action" id="approved_teacher_substitution_manager_menu" parent="approved_manager_menu_report_id" name="EA Substitution Slip (Approved Only)" sequence="6"
+			groups="beacon_hr.slip_acad_dheads_groups"/>
+	<!-- EA SUBSTITUTION VIEW FOR DEPARTMENT HEAD ( APPROVED ONLY ) == END -->
+
+	<!-- EA SUBSTITUTION VIEW FOR ADMIN ACTION == START -->
+		<record id="teacher_substitution_admin_action" model="ir.actions.act_window">
+			<field name="name">EA Substitution Slip</field>
+			<field name="res_model">teacher.substitution.slip</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="search_view_id" eval="False"/>
+			<field name="context">{}</field>
+			<field name="help"></field>
+			<field name="domain"></field>
+		</record>
+
+		<record model="ir.actions.act_window.view" id="admin_act_ea_substitution_tree_view">
+			<field eval="2" name="sequence"/>
+			<field name="view_mode">tree</field>
+			<field name="view_id" ref="noedit_teacher_substitution_slip_tree_view"/>
+			<field name="act_window_id" ref="teacher_substitution_admin_action"/>
+		</record>
+
+		<record model="ir.actions.act_window.view" id="admin_act_ea_substitution_form_view">
+			<field eval="3" name="sequence"/>
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="admin_teacher_substitution_slip_form_view"/>
+			<field name="act_window_id" ref="teacher_substitution_admin_action"/>
+		</record>
+
+		<menuitem action="teacher_substitution_admin_action" id="teacher_substitution_admin_menu" parent="admin_menu_report_id" name="EA Substitution Slip (Admin)" sequence="6" groups="base.group_hr_manager"/>
+	<!-- EA SUBSTITUTION VIEW FOR ADMIN ACTION == END -->
+<!-- EA SUBSTITUTION SLIP VIEW ACTION == END -->
+
+<!-- OFFICIAL BUSINESS SLIP FORMS == START -->
+	<!-- OFFICIAL BUSINESS TREE VIEW FOR USERS == START -->
+		<record id="official_business_slip_tree_view" model="ir.ui.view">
+			<field name="name">official.business.slip.tree.view</field>
+			<field name="model">official.business.slip</field>
+			<field name="arch" type="xml">
+				<tree string="Overtime">
+					<field name="name"/>
+					<field name="state"/>
+					<field name="date"/>
+				</tree>
+			</field>
+		</record>
+	<!-- OFFICIAL BUSINESS TREE VIEW FOR USERS == END -->
+
+	<!-- OFFICIAL BUSINESS FORM VIEW FOR USERS == START -->
+		<record id="official_business_slip_form_view" model="ir.ui.view">
+			<field name="name">official.business.slip.form.view</field>
+			<field name="model">official.business.slip</field>
+			<field name="arch" type="xml">
+				<form>
+					<header>
+						<button string="Set to Draft" name="def_draft" type="object" class="oe_highlight" attrs="{'invisible': [('state', 'not in', 'd')]}"/>
+						<button name="def_to_approve" string="Submit" type="object" class="oe_highlight" attrs="{'invisible': [('state', 'not in', 'a')]}"/>
+						<button name="def_approve" string="Approve" type="object" class="oe_highlight" attrs="{'invisible': [('state', 'not in', 'b')]}" groups="attendance_monitor.group_department_head,base.group_hr_manager"/>
+						<button name="def_cancel" string="Disapprove" type="object" class="oe_highlight" attrs="{'invisible': [('state', 'in', 'd')]}"
+							groups="attendance_monitor.group_department_head,base.group_hr_manager"/>
+
+						<field name="state" widget="statusbar"/>
+					</header>
+					<sheet>
+						<group>
+							<field name="date_filed" readonly="1"/>
+							<field name="name" options="{'no_open': True,'no_create': 1, 'no_create_edit': 1}"/>
+							<field name="res_user" invisible="1"/>
+							<field name="date"/>
+							<field name="client_name"/>
+							<field name="client_address"/>
+							<field name="tel_num"/>
+							<field name="purpose"/>
+							<field name="department"/>
+							<field name="approver_name" style="width:50%" options="{'no_open': True,'no_create': 1, 'no_create_edit': 1}" readonly="1"/>
+						<field name="department_head_id" style="width:50%" invisible="1"/>
+						</group>
+					</sheet>
+					<div class="oe_chatter">
+						<field name="message_follower_ids" widget="mail_followers"/>
+						<field name="message_ids" widget="mail_thread"/>
+					</div>
+				</form>
+			</field>
+		</record>
+	<!-- OFFICIAL BUSINESS FORM VIEW FOR USERS == END -->
+<!-- OFFICIAL BUSINESS SLIP FORMS == END -->
+
+<!-- OFFICIAL BUSINESS SLIP VIEW ACTION == START -->
+	<!-- OFFICIAL BUSINESS VIEW FOR USERS == START -->
+		<record id="official_business_user_action" model="ir.actions.act_window">
+			<field name="name">Official Business Slip</field>
+			<field name="res_model">official.business.slip</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="search_view_id" eval="False"/>
+			<field name="context">{}</field>
+			<field name="help"></field>
+			<field name="domain">[('res_user','=',uid)]</field>
+		</record>
+
+		<!--
+		<menuitem action="official_business_user_action" id="official_business_user_menu" parent="user_menu_report_id" name="Official Business Slip" sequence="2" groups="beacon_hr.slip_non_acad_group,beacon_hr.slip_acad_group"/>
+		-->
+	<!-- OFFICIAL BUSINESS VIEW FOR USERS == END -->
+
+	<!-- OFFICIAL BUSINESS VIEW FOR DEPARTMENT HEAD == START -->
+		<record id="official_business_manager_action" model="ir.actions.act_window">
+			<field name="name">Official Business Slip</field>
+			<field name="res_model">official.business.slip</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="search_view_id" eval="False"/>
+			<field name="context">{}</field>
+			<field name="help"></field>
+			<field name="domain">[('department_head_id','=',uid),('state','!=','c'),('state','!=','a')]</field>
+		</record>
+
+		<!--
+		<menuitem action="official_business_manager_action" id="official_business_manager_menu" parent="manager_menu_report_id" name="Official Business Slip (Manager)" sequence="5"
+			groups="beacon_hr.slip_non_acad_dheads_groups,beacon_hr.slip_acad_dheads_groups"/>
+		-->
+	<!-- OFFICIAL BUSINESS VIEW FOR DEPARTMENT HEAD == END -->
+
+	<!-- OFFICIAL BUSINESS VIEW FOR DEPARTMENT HEAD (APPROVED ONLY) == START -->
+		<record id="approved_official_business_manager_action" model="ir.actions.act_window">
+			<field name="name">Official Business Slip</field>
+			<field name="res_model">official.business.slip</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="search_view_id" eval="False"/>
+			<field name="context">{}</field>
+			<field name="help"></field>
+			<field name="domain">[('department_head_id','=',uid),('state','=','c')]</field>
+		</record>
+
+		<!--
+		<menuitem action="approved_official_business_manager_action" id="approved_official_business_manager_menu" parent="approved_manager_menu_report_id" name="Official Business Slip (Approved Only)" sequence="5"
+			groups="beacon_hr.slip_non_acad_dheads_groups,beacon_hr.slip_acad_dheads_groups"/>
+		-->
+	<!-- OFFICIAL BUSINESS VIEW FOR DEPARTMENT HEAD (APPROVED ONLY) == END -->
+
+	<!-- OFFICIAL BUSINESS VIEW FOR ADMIN ACTION == START -->
+		<record id="official_business_admin_action" model="ir.actions.act_window">
+			<field name="name">Official Business Slip</field>
+			<field name="res_model">official.business.slip</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="search_view_id" eval="False"/>
+			<field name="context">{}</field>
+			<field name="help"></field>
+			<field name="domain"></field>
+		</record>
+
+		<!--
+		<menuitem action="official_business_admin_action" id="official_business_admin_menu" parent="admin_menu_report_id" name="Official Business Slip (Admin)" sequence="5" groups="base.group_hr_manager"/>
+		-->
+	<!-- OFFICIAL BUSINESS VIEW FOR ADMIN ACTION == END -->
+<!-- OFFICIAL BUSINESS SLIP VIEW ACTION == END -->
+
+
+	</data>
+</openerp>

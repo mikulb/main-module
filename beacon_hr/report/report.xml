@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+
+		<record id="overtime_slip_report" model="ir.actions.report.xml">
+			<field name="name">Overtime Slip</field>
+			<field name="report_name">overtime.slip.report</field>
+			<field name="model">overtime.slip</field>
+			<field name="pentaho_report_model_id" ref="model_overtime_slip"/>
+			<field name="rml">beacon_hr/report/overtime_slip.prpt</field> 
+			<field name="pentaho_filename">beacon_hr/report/overtime_slip.prpt</field>
+			<field name="pentaho_report_output_type">pdf</field>
+			<field name="report_type">pentaho</field>
+			<field name="auto" eval="False"/> 
+			<field name="is_pentaho_report" eval="True"/>
+			<field name="pentaho_load_file" eval="True"/>
+		</record>
+
+		<record id="official_business_slip_report" model="ir.actions.report.xml">
+			<field name="name">Official Business Slip</field>
+			<field name="report_name">official.business.slip.report</field>
+			<field name="model">official.business.slip</field>
+			<field name="pentaho_report_model_id" ref="model_official_business_slip"/>
+			<field name="rml">beacon_hr/report/official_business_slip.prpt</field> 
+			<field name="pentaho_filename">beacon_hr/report/official_business_slip.prpt</field>
+			<field name="pentaho_report_output_type">pdf</field>
+			<field name="report_type">pentaho</field>
+			<field name="auto" eval="False"/> 
+			<field name="is_pentaho_report" eval="True"/>
+			<field name="pentaho_load_file" eval="True"/>
+		</record>
+
+		<record id="teacher_substitution_slip_report" model="ir.actions.report.xml">
+			<field name="name">Teacher Substitution Slip</field>
+			<field name="report_name">teacher.substitution.slip.report</field>
+			<field name="model">teacher.substitution.slip</field>
+			<field name="pentaho_report_model_id" ref="model_teacher_substitution_slip"/>
+			<field name="rml">beacon_hr/report/teacher_sub_slip.prpt</field> 
+			<field name="pentaho_filename">beacon_hr/report/teacher_sub_slip.prpt</field>
+			<field name="pentaho_report_output_type">pdf</field>
+			<field name="report_type">pentaho</field>
+			<field name="auto" eval="False"/> 
+			<field name="is_pentaho_report" eval="True"/>
+			<field name="pentaho_load_file" eval="True"/>
+		</record>
+
+		<record id="attendance_report" model="ir.actions.report.xml">
+			<field name="name">Attendance Report</field>
+			<field name="report_name">attendance.report</field>
+			<field name="model">x</field>
+			<field name="pentaho_report_model_id" ref="model_attendance_report"/>
+			<field name="rml">beacon_hr/report/attendance.prpt</field> 
+			<field name="pentaho_filename">beacon_hr/report/attendance.prpt</field>
+			<field name="pentaho_report_output_type">pdf</field>
+			<field name="report_type">pentaho</field>
+			<field name="auto" eval="False"/> 
+			<field name="is_pentaho_report" eval="True"/>
+			<field name="pentaho_load_file" eval="True"/>
+		</record>
+
+		<record id="all_overtime_report" model="ir.actions.report.xml">
+			<field name="name">Overtime Report</field>
+			<field name="report_name">all.overtime.report</field>
+			<field name="model">x</field>
+			<field name="pentaho_report_model_id" ref="model_all_overtime_report"/>
+			<field name="rml">beacon_hr/report/all_overtime.prpt</field> 
+			<field name="pentaho_filename">beacon_hr/report/all_overtime.prpt</field>
+			<field name="pentaho_report_output_type">pdf</field>
+			<field name="report_type">pentaho</field>
+			<field name="auto" eval="False"/> 
+			<field name="is_pentaho_report" eval="True"/>
+			<field name="pentaho_load_file" eval="True"/>
+		</record>
+
+		<record id="payroll_summary_report_wizard" model="ir.actions.report.xml">
+			<field name="name">Payroll Summary</field>
+			<field name="report_name">payroll.summary.report.wizard</field>
+			<field name="model">x</field>
+			<field name="pentaho_report_model_id" ref="model_payroll_summary_report"/>
+			<field name="rml">beacon_hr/report/payroll_summary.prpt</field> 
+			<field name="pentaho_filename">beacon_hr/report/payroll_summary.prpt</field>
+			<field name="pentaho_report_output_type">pdf</field>
+			<field name="report_type">pentaho</field>
+			<field name="auto" eval="False"/> 
+			<field name="is_pentaho_report" eval="True"/>
+			<field name="pentaho_load_file" eval="True"/>
+		</record>
+
+		<record id="timesheet_employee_report_wizard" model="ir.actions.report.xml">
+			<field name="name">Timesheet Per Employee</field>
+			<field name="report_name">timesheet.employee.report.wizard</field>
+			<field name="model">x</field>
+			<field name="pentaho_report_model_id" ref="model_timesheet_per_employee"/>
+			<field name="rml">beacon_hr/report/timesheet_per_person.prpt</field> 
+			<field name="pentaho_filename">beacon_hr/report/timesheet_per_person.prpt</field>
+			<field name="pentaho_report_output_type">pdf</field>
+			<field name="report_type">pentaho</field>
+			<field name="auto" eval="False"/> 
+			<field name="is_pentaho_report" eval="True"/>
+			<field name="pentaho_load_file" eval="True"/>
+		</record>
+
+	</data>
+</openerp>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data noupdate="0">
+
+		<record id="slips_access_rights" model="ir.module.category">
+			<field name="name">Slips Rule</field>
+			<field name="sequence">30</field>
+		</record>
+
+		<record id="slip_acad_group" model="res.groups">
+			<field name="name">Academics User Only</field>
+			<field name="category_id" ref="beacon_hr.slips_access_rights"/>
+		</record>
+
+		<record id="slip_non_acad_group" model="res.groups">
+			<field name="name">Non-Academics User Only</field>
+			<field name="category_id" ref="beacon_hr.slips_access_rights"/>
+		</record>
+
+		<record id="slip_acad_dheads_groups" model="res.groups">
+			<field name="name">Academic Department Head</field>
+			<!-- <field name="implied_ids" eval="[(4, ref('beacon_hr.group_overtime_users'))]"/> -->
+			<field name="category_id" ref="beacon_hr.slips_access_rights"/>
+		</record>
+
+		<record id="slip_non_acad_dheads_groups" model="res.groups">
+			<field name="name">Non-Academics Department Head</field>
+			<!-- <field name="implied_ids" eval="[(4, ref('beacon_hr.group_overtime_users'))]"/> -->
+			<field name="category_id" ref="beacon_hr.slips_access_rights"/>
+		</record>
+
+	</data>
+</openerp>
